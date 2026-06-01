@@ -11,20 +11,20 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-import DefaultWrap from '../../../components/wrappers/DefaultWrap';
 import {Texts} from '../../../components/common/Texts';
+import DefaultWrap from '../../../components/wrappers/DefaultWrap';
 import layout from '../../../theme/layout';
 
+import SizedView from '../../../components/common/SizedView';
 import {ExpenseStorage} from '../../../store/local-store/ExpenseStorage';
+import {rwp} from '../../../utils/helpers/responsivePixelHelper';
+import {AnalyticsEngine} from '../utils/AnalyticsEngine';
 import {
   detectCategory,
-  learnCategory,
   getExpenseType,
+  learnCategory,
 } from '../utils/SmartClassifier';
-import {AnalyticsEngine} from '../utils/AnalyticsEngine';
-import SizedView from '../../../components/common/SizedView';
-import {rwp} from '../../../utils/helpers/responsivePixelHelper';
-import {Size} from 'react-native-popover-view';
+import {refreshWidget} from '../../../widgets/WidgetUpdater';
 
 const categories = [
   'Food',
@@ -86,6 +86,7 @@ const HomeScreen = () => {
     const updated = [newExpense, ...expenses];
 
     await saveExpenses(updated);
+    await refreshWidget();
 
     setTitle('');
     setAmount('');
@@ -104,6 +105,7 @@ const HomeScreen = () => {
           const updated = expenses.filter(x => x.id !== id);
 
           await saveExpenses(updated);
+          await refreshWidget();
         },
       },
     ]);

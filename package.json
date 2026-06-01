@@ -36,6 +36,7 @@
     "react-native": "0.79.2",
     "react-native-alert-notification": "^0.4.2",
     "react-native-android-location-enabler": "^3.0.1",
+    "react-native-android-widget": "^0.20.3",
     "react-native-avoid-softinput": "^7.0.2",
     "react-native-background-timer": "^2.4.1",
     "react-native-blob-util": "^0.24.7",
