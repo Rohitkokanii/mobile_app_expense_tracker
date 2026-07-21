@@ -1,17 +1,34 @@
+// Helper to safely parse dates from local store or Firebase Timestamps
+const parseDate = item => {
+  const dateVal = item?.date || item?.createdAt;
+  if (!dateVal) return new Date(0); // Fallback to epoch if missing
+
+  // Handle Firebase Firestore Timestamp objects
+  if (typeof dateVal.toDate === 'function') {
+    return dateVal.toDate();
+  }
+
+  // Handle standard date strings / numbers / Date objects
+  const parsed = new Date(dateVal);
+  return isNaN(parsed.getTime()) ? new Date(0) : parsed;
+};
+
 export const AnalyticsEngine = {
   total(expenses) {
-    return expenses.reduce((sum, item) => sum + Number(item.amount), 0);
+    if (!Array.isArray(expenses)) return 0;
+    return expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
   },
 
   categoryBreakdown(expenses) {
     const data = {};
+    if (!Array.isArray(expenses)) return data;
 
     expenses.forEach(item => {
-      if (!data[item.category]) {
-        data[item.category] = 0;
+      const category = item.category || 'Uncategorized';
+      if (!data[category]) {
+        data[category] = 0;
       }
-
-      data[item.category] += Number(item.amount);
+      data[category] += Number(item.amount || 0);
     });
 
     return data;
@@ -26,7 +43,6 @@ export const AnalyticsEngine = {
     Object.keys(map).forEach(category => {
       if (map[category] > max) {
         max = map[category];
-
         winner = category;
       }
     });
@@ -42,17 +58,18 @@ export const AnalyticsEngine = {
     let growth = 0;
     let irrelevant = 0;
 
+    if (!Array.isArray(expenses)) {
+      return {necessary, growth, irrelevant};
+    }
+
     expenses.forEach(item => {
+      const amt = Number(item.amount || 0);
       if (item.type === 'Necessary') {
-        necessary += Number(item.amount);
-      }
-
-      if (item.type === 'Growth') {
-        growth += Number(item.amount);
-      }
-
-      if (item.type === 'Irrelevant') {
-        irrelevant += Number(item.amount);
+        necessary += amt;
+      } else if (item.type === 'Growth') {
+        growth += amt;
+      } else if (item.type === 'Irrelevant') {
+        irrelevant += amt;
       }
     });
 
@@ -64,22 +81,28 @@ export const AnalyticsEngine = {
   },
 
   currentMonth(expenses) {
-    const month = new Date().getMonth();
+    if (!Array.isArray(expenses)) return [];
 
-    const year = new Date().getFullYear();
+    const now = new Date();
+    const currentMonthNum = now.getMonth();
+    const currentYearNum = now.getFullYear();
 
     return expenses.filter(item => {
-      const d = new Date(item.date);
-
-      return d.getMonth() === month && d.getFullYear() === year;
+      const d = parseDate(item);
+      return (
+        d.getMonth() === currentMonthNum && d.getFullYear() === currentYearNum
+      );
     });
   },
 
   monthlyTotals(expenses) {
     const months = {};
+    if (!Array.isArray(expenses)) return months;
 
     expenses.forEach(item => {
-      const date = new Date(item.date);
+      const date = parseDate(item);
+      // Skip fallback dates if completely invalid
+      if (date.getTime() === 0) return;
 
       const key = `${date.getMonth() + 1}-${date.getFullYear()}`;
 
@@ -87,7 +110,7 @@ export const AnalyticsEngine = {
         months[key] = 0;
       }
 
-      months[key] += Number(item.amount);
+      months[key] += Number(item.amount || 0);
     });
 
     return months;
@@ -95,10 +118,14 @@ export const AnalyticsEngine = {
 
   insights(expenses) {
     const insights = [];
+    if (!Array.isArray(expenses) || expenses.length === 0) {
+      return ['No spending data available.'];
+    }
 
     const top = this.biggestCategory(expenses);
-
-    insights.push(`Highest spending: ${top.category}`);
+    if (top.category !== 'None') {
+      insights.push(`Highest spending: ${top.category}`);
+    }
 
     const types = this.typeTotals(expenses);
 
@@ -106,7 +133,7 @@ export const AnalyticsEngine = {
       insights.push('⚠ Irrelevant spending exceeds investments.');
     }
 
-    if (types.growth > types.necessary) {
+    if (types.growth > types.necessary && types.growth > 0) {
       insights.push('✓ Strong investment habit.');
     }
 

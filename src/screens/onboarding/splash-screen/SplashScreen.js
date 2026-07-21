@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   StyleSheet,
   TouchableWithoutFeedback,
@@ -7,19 +7,21 @@ import {
   Platform,
 } from 'react-native';
 import Video from 'react-native-video';
-import {checkVersion} from 'react-native-check-version';
 import {VIDEOS} from '../../../utils/constant/videosConstant';
 import {getToken} from '../../../store/local-store/localDB';
 import {requestLocationPermissions} from '../../../utils/helpers/LocationPermissionHelper';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
 import {useIsFocused} from '@react-navigation/native';
-import {useMyContext} from '../../../store/context-store/myContextProvider';
+
 const SplashScreen = ({navigation}) => {
   const isFocused = useIsFocused();
-  useEffect(() => {
-    requestLocationPermissions();
-  }, [isFocused]);
-  // const {updateProfileData} = useMyContext();
+  const hasNavigated = useRef(false);
+
+  // useEffect(() => {
+  //   requestLocationPermissions();
+  // }, [isFocused]);
+
+  // Reset navigation hierarchy directly to HomeScreen inside TabGroup/DrawerGroup
   const goToHome = () => {
     navigation.reset({
       index: 0,
@@ -46,33 +48,40 @@ const SplashScreen = ({navigation}) => {
   };
 
   const handleNext = async () => {
-    if (navigation.isFocused()) {
-      const token = await getToken();
-      console.warn('token: ', token);
+    // Prevent navigating multiple times from taps, video end, or timers
+    if (hasNavigated.current) return;
 
-      // const profileData = await updateProfileData();
-      if (token) {
-        goToHome();
-        console.log('got token');
-      } else {
-        navigation.replace('WelcomeScreen');
-        // navigation.replace('SelectLanguageScreen');
+    if (navigation.isFocused()) {
+      hasNavigated.current = true;
+
+      try {
+        const token = await getToken();
+        console.log('SplashScreen - Retrieved Token:', token);
+
+        if (token) {
+          console.log('Token exists -> Navigating to HomeScreen');
+          goToHome();
+        } else {
+          console.log('No token found -> Navigating to WelcomeScreen');
+          navigation.replace('LoginScreen'); // Change to 'LoginScreen' if preferred
+        }
+      } catch (error) {
+        console.error('Error getting token on splash:', error);
+        navigation.replace('LoginScreen');
       }
     }
   };
 
   useEffect(() => {
-    const timeout = setTimeout(async () => {
-      if (navigation.isFocused()) {
-        if (true) {
-          handleNext();
-        }
-      }
-    }, 1000); // check update after 1s
+    // 1-second initial splash delay
+    const timeout = setTimeout(() => {
+      handleNext();
+    }, 1000);
 
+    // Fallback timer in case video loading hangs or takes too long
     const fallback = setTimeout(() => {
       handleNext();
-    }, 11000); // fallback after 11 seconds in case video hangs
+    }, 5000);
 
     return () => {
       clearTimeout(timeout);
@@ -87,7 +96,10 @@ const SplashScreen = ({navigation}) => {
         source={VIDEOS.SPLASH}
         style={styles.video}
         resizeMode="cover"
-        onError={e => console.error('Video error:', e)}
+        onError={e => {
+          console.error('Video error:', e);
+          handleNext();
+        }}
         onEnd={handleNext}
       />
     </TouchableWithoutFeedback>

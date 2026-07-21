@@ -1,5 +1,11 @@
-import React, {useCallback, useMemo, useState} from 'react';
-import {FlatList, ScrollView, StyleSheet, View} from 'react-native';
+import React, {useCallback, useMemo} from 'react';
+import {
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import {PieChart, BarChart} from 'react-native-chart-kit';
@@ -8,25 +14,19 @@ import DefaultWrap from '../../../components/wrappers/DefaultWrap';
 import {Texts} from '../../../components/common/Texts';
 import layout from '../../../theme/layout';
 
-import {ExpenseStorage} from '../../../store/local-store/ExpenseStorage';
 import {AnalyticsEngine} from '../utils/AnalyticsEngine';
 import SizedView from '../../../components/common/SizedView';
 import {rwp} from '../../../utils/helpers/responsivePixelHelper';
+import {useHistory} from './useHistory';
 
 const HistoryScreen = () => {
-  const [expenses, setExpenses] = useState([]);
+  const {expenses, loading, fetchExpenses} = useHistory();
 
   useFocusEffect(
     useCallback(() => {
-      load();
-    }, []),
+      fetchExpenses();
+    }, [fetchExpenses]),
   );
-
-  const load = async () => {
-    const data = await ExpenseStorage.getExpenses();
-
-    setExpenses(data);
-  };
 
   const currentMonth = useMemo(
     () => AnalyticsEngine.currentMonth(expenses),
@@ -58,6 +58,7 @@ const HistoryScreen = () => {
     legendFontColor: '#fff',
     legendFontSize: 12,
   }));
+  console.log(expenses);
 
   const monthlyMap = AnalyticsEngine.monthlyTotals(expenses);
 
@@ -69,109 +70,130 @@ const HistoryScreen = () => {
     <DefaultWrap MainContainer={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <SizedView height={50} />
-        <LinearGradient
-          colors={['#111827', '#1E293B', '#0F172A']}
-          style={styles.headerCard}>
-          <Texts.pt18 style={styles.smallTitle}>This Month</Texts.pt18>
 
-          <Texts.pt34 style={styles.total}>₹{total}</Texts.pt34>
+        {loading && expenses.length === 0 ? (
+          <ActivityIndicator
+            size="large"
+            color="#8B5CF6"
+            style={styles.loader}
+          />
+        ) : (
+          <>
+            <LinearGradient
+              colors={['#111827', '#1E293B', '#0F172A']}
+              style={styles.headerCard}>
+              <Texts.pt18 style={styles.smallTitle}>This Month</Texts.pt18>
 
-          <Texts.pt16 style={styles.biggest}>
-            Highest: {biggest.category}
-          </Texts.pt16>
-        </LinearGradient>
+              <Texts.pt34 style={styles.total}>₹{total}</Texts.pt34>
 
-        <View style={styles.analyticsCard}>
-          <Texts.pt20 style={styles.title}>Financial Health</Texts.pt20>
+              <Texts.pt16 style={styles.biggest}>
+                Highest: {biggest?.category || 'N/A'}
+              </Texts.pt16>
+            </LinearGradient>
 
-          <Texts.pt14 style={styles.metric}>Growth: ₹{types.growth}</Texts.pt14>
+            <View style={styles.analyticsCard}>
+              <Texts.pt20 style={styles.title}>Financial Health</Texts.pt20>
 
-          <Texts.pt14 style={styles.metric}>
-            Necessary: ₹{types.necessary}
-          </Texts.pt14>
+              <Texts.pt14 style={styles.metric}>
+                Growth: ₹{types.growth || 0}
+              </Texts.pt14>
 
-          <Texts.pt14 style={styles.metric}>
-            Irrelevant: ₹{types.irrelevant}
-          </Texts.pt14>
-        </View>
+              <Texts.pt14 style={styles.metric}>
+                Necessary: ₹{types.necessary || 0}
+              </Texts.pt14>
 
-        {pieData.length > 0 && (
-          <View style={styles.chartCard}>
-            <Texts.pt20 style={styles.title}>Spending Distribution</Texts.pt20>
-
-            <PieChart
-              data={pieData}
-              width={320}
-              height={220}
-              accessor="amount"
-              backgroundColor="transparent"
-              paddingLeft="10"
-              absolute
-              chartConfig={{
-                color: () => '#fff',
-              }}
-            />
-          </View>
-        )}
-
-        {months.length > 0 && (
-          <View style={styles.chartCard}>
-            <Texts.pt20 style={styles.title}>Monthly Trend</Texts.pt20>
-
-            <BarChart
-              data={{
-                labels: months,
-                datasets: [
-                  {
-                    data: amounts,
-                  },
-                ],
-              }}
-              width={340}
-              height={220}
-              fromZero
-              yAxisLabel="₹"
-              chartConfig={{
-                backgroundGradientFrom: '#111827',
-                backgroundGradientTo: '#111827',
-                decimalPlaces: 0,
-                color: opacity => `rgba(139,92,246,${opacity})`,
-                labelColor: () => '#fff',
-              }}
-              style={{
-                borderRadius: 18,
-              }}
-            />
-          </View>
-        )}
-
-        <View style={styles.analyticsCard}>
-          <Texts.pt20 style={styles.title}>AI Insights</Texts.pt20>
-
-          {insights.map((item, index) => (
-            <Texts.pt13 key={index} style={styles.insight}>
-              • {item}
-            </Texts.pt13>
-          ))}
-        </View>
-
-        <Texts.pt22 style={styles.historyTitle}>Expense History</Texts.pt22>
-
-        <FlatList
-          data={currentMonth}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => (
-            <View style={styles.rowCard}>
-              <View>
-                <Texts.pt17 style={styles.itemTitle}>{item.title}</Texts.pt17>
-
-                <Texts.pt12 style={styles.category}>{item.category}</Texts.pt12>
-              </View>
-
-              <Texts.pt18 style={styles.amount}>₹{item.amount}</Texts.pt18>
+              <Texts.pt14 style={styles.metric}>
+                Irrelevant: ₹{types.irrelevant || 0}
+              </Texts.pt14>
             </View>
-          )}
-        />
+
+            {pieData.length > 0 && (
+              <View style={styles.chartCard}>
+                <Texts.pt20 style={styles.title}>
+                  Spending Distribution
+                </Texts.pt20>
+
+                <PieChart
+                  data={pieData}
+                  width={320}
+                  height={220}
+                  accessor="amount"
+                  backgroundColor="transparent"
+                  paddingLeft="10"
+                  absolute
+                  chartConfig={{
+                    color: () => '#fff',
+                  }}
+                />
+              </View>
+            )}
+
+            {months.length > 0 && (
+              <View style={styles.chartCard}>
+                <Texts.pt20 style={styles.title}>Monthly Trend</Texts.pt20>
+
+                <BarChart
+                  data={{
+                    labels: months,
+                    datasets: [
+                      {
+                        data: amounts,
+                      },
+                    ],
+                  }}
+                  width={340}
+                  height={220}
+                  fromZero
+                  yAxisLabel="₹"
+                  chartConfig={{
+                    backgroundGradientFrom: '#111827',
+                    backgroundGradientTo: '#111827',
+                    decimalPlaces: 0,
+                    color: opacity => `rgba(139,92,246,${opacity})`,
+                    labelColor: () => '#fff',
+                  }}
+                  style={{
+                    borderRadius: 18,
+                  }}
+                />
+              </View>
+            )}
+
+            <View style={styles.analyticsCard}>
+              <Texts.pt20 style={styles.title}>AI Insights</Texts.pt20>
+
+              {insights.map((item, index) => (
+                <Texts.pt13 key={index} style={styles.insight}>
+                  • {item}
+                </Texts.pt13>
+              ))}
+            </View>
+
+            <Texts.pt22 style={styles.historyTitle}>Expense History</Texts.pt22>
+
+            <FlatList
+              data={currentMonth}
+              keyExtractor={item => item.id}
+              scrollEnabled={false}
+              renderItem={({item}) => (
+                <View style={styles.rowCard}>
+                  <View>
+                    <Texts.pt17 style={styles.itemTitle}>
+                      {item.title}
+                    </Texts.pt17>
+
+                    <Texts.pt12 style={styles.category}>
+                      {item.category}
+                    </Texts.pt12>
+                  </View>
+
+                  <Texts.pt18 style={styles.amount}>₹{item.amount}</Texts.pt18>
+                </View>
+              )}
+            />
+          </>
+        )}
+
         <SizedView height={100} />
       </ScrollView>
     </DefaultWrap>
@@ -185,6 +207,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#050816',
     paddingHorizontal: rwp(10),
+  },
+
+  loader: {
+    marginVertical: 40,
   },
 
   headerCard: {
