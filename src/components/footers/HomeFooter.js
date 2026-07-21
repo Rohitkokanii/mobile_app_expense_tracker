@@ -17,7 +17,7 @@ import {
 
 import {responsiveFontSize} from 'react-native-responsive-dimensions';
 import {IMAGES} from '../../utils/constant/imageConstant';
-import {rhp} from '../../utils/helpers/responsivePixelHelper';
+import {rhp, rwp} from '../../utils/helpers/responsivePixelHelper';
 
 const HomeFooter = () => {
   const route = useRoute();
@@ -45,9 +45,9 @@ const HomeFooter = () => {
       Animated.spring(animX, {
         toValue: selectedIndex,
         useNativeDriver: true, // Switched to true for ultra-smooth 60fps performance
-        damping: 12, // Controls how fast the elastic stretch stabilizes
-        mass: 0.9, // Lighter mass gives it a quick, bouncy, bubble feel
-        stiffness: 110, // Adds extra elasticity to the spring physics
+        damping: 15, // Controls how fast the elastic stretch stabilizes
+        mass: 2, // Lighter mass gives it a quick, bouncy, bubble feel
+        stiffness: 120, // Adds extra elasticity to the spring physics
       }).start();
     }
   }, [selectedIndex]);
@@ -55,11 +55,14 @@ const HomeFooter = () => {
   // Calculate pixel layout boundaries for absolute transformations
   const containerWidth = windowWidth * 0.8;
   const tabWidth = containerWidth / 3;
+  const BAR_WIDTH = tabWidth * 0.75; // Adjust 0.65 to whatever size looks best
 
+  // 2. Calculate the offset needed to center it inside the tab slot
+  const offset = (tabWidth - BAR_WIDTH) / 2;
   // 1. Movement logic (moves the bubble horizontally)
   const translateX = animX.interpolate({
     inputRange: [0, 1, 2],
-    outputRange: [0, tabWidth, tabWidth * 2],
+    outputRange: [offset, tabWidth + offset, tabWidth * 2 + offset],
   });
 
   // 2. Bubble Stretch effect logic (stretches width when between tabs, squashes when landing)
@@ -76,7 +79,7 @@ const HomeFooter = () => {
           style={[
             styles.selectedBar,
             {
-              width: tabWidth,
+              width: BAR_WIDTH, // Used reduced width here
               transform: [{translateX: translateX}, {scaleX: scaleX}],
             },
           ]}
@@ -105,7 +108,7 @@ const HomeFooter = () => {
                   color: isSelected ? '#FFFFFF' : '#94A3B8',
                   fontWeight: '700',
                   textAlign: 'center',
-                  fontSize: responsiveFontSize(1.5),
+                  fontSize: responsiveFontSize(1.4),
                 }}>
                 {item.title}
               </Text>
@@ -132,7 +135,7 @@ const styles = StyleSheet.create({
     elevation: 999,
   },
   subContainer: {
-    height: rhp(62),
+    height: rhp(52),
     flexDirection: 'row',
     borderRadius: 28,
     backgroundColor: 'rgba(17,24,39,0.92)',
@@ -149,20 +152,20 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    rowGap: rhp(4),
+    // rowGap: rhp(4),
     zIndex: 2,
   },
   optionImage: {
-    height: rhp(22),
-    width: rhp(22),
+    height: rhp(20),
+    width: rhp(20),
     resizeMode: 'contain',
   },
   selectedBar: {
     position: 'absolute',
     left: 0,
-    height: rhp(52),
+    height: rhp(42),
     borderRadius: 20,
-    backgroundColor: '#8B5CF6',
+    backgroundColor: '#8a5cf68e',
     zIndex: 1,
     top: (rhp(62) - rhp(52)) / 2,
   },
