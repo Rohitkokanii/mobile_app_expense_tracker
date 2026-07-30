@@ -5,6 +5,8 @@ import {
   ToastAndroid,
   Linking,
   Platform,
+  Pressable,
+  Image,
 } from 'react-native';
 import Video from 'react-native-video';
 import {VIDEOS} from '../../../utils/constant/videosConstant';
@@ -12,6 +14,7 @@ import {getToken} from '../../../store/local-store/localDB';
 import {requestLocationPermissions} from '../../../utils/helpers/LocationPermissionHelper';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
 import {useIsFocused} from '@react-navigation/native';
+import {IMAGES} from '../../../utils/constant/imageConstant';
 
 const SplashScreen = ({navigation}) => {
   const isFocused = useIsFocused();
@@ -76,7 +79,7 @@ const SplashScreen = ({navigation}) => {
     // 1-second initial splash delay
     const timeout = setTimeout(() => {
       handleNext();
-    }, 1000);
+    }, 2000);
 
     // Fallback timer in case video loading hangs or takes too long
     const fallback = setTimeout(() => {
@@ -90,27 +93,23 @@ const SplashScreen = ({navigation}) => {
   }, []);
 
   return (
-    <TouchableWithoutFeedback onPress={handleNext}>
-      <Video
-        muted
-        source={VIDEOS.SPLASH}
-        style={styles.video}
-        resizeMode="cover"
-        onError={e => {
-          console.error('Video error:', e);
-          handleNext();
-        }}
-        onEnd={handleNext}
-      />
-    </TouchableWithoutFeedback>
+    <Pressable onPress={handleNext} style={styles.container}>
+      <Image source={IMAGES.Splash} style={styles.image} resizeMode="cover" />
+    </Pressable>
   );
 };
 
 export default SplashScreen;
 
 const styles = StyleSheet.create({
-  video: {
-    height: responsiveHeight(101),
-    backgroundColor: 'white',
+  container: {
+    flex: 1,
+    // backgroundColor: '#FFFFFF',
+  },
+
+  image: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
 });
