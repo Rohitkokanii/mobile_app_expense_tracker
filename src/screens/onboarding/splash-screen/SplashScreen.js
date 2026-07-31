@@ -1,53 +1,29 @@
 import React, {useEffect, useRef} from 'react';
-import {
-  StyleSheet,
-  TouchableWithoutFeedback,
-  ToastAndroid,
-  Linking,
-  Platform,
-  Pressable,
-  Image,
-} from 'react-native';
-import Video from 'react-native-video';
-import {VIDEOS} from '../../../utils/constant/videosConstant';
+import {Image, Pressable, StyleSheet} from 'react-native';
 import {getToken} from '../../../store/local-store/localDB';
-import {requestLocationPermissions} from '../../../utils/helpers/LocationPermissionHelper';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
-import {useIsFocused} from '@react-navigation/native';
 import {IMAGES} from '../../../utils/constant/imageConstant';
 
 const SplashScreen = ({navigation}) => {
-  const isFocused = useIsFocused();
   const hasNavigated = useRef(false);
 
-  // useEffect(() => {
-  //   requestLocationPermissions();
-  // }, [isFocused]);
-
-  // Reset navigation hierarchy directly to HomeScreen inside TabGroup/DrawerGroup
   const goToHome = () => {
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: 'DrawerGroup',
-          state: {
-            routes: [
-              {
-                name: 'TabGroup',
-                state: {
-                  routes: [
-                    {
-                      name: 'HomeScreen',
-                    },
-                  ],
+    if (navigation) {
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'TabGroup',
+            state: {
+              routes: [
+                {
+                  name: 'HomeScreen',
                 },
-              },
-            ],
+              ],
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
+    }
   };
 
   const handleNext = async () => {

@@ -33,10 +33,8 @@ const LoginScreen = ({navigation}) => {
         <Text style={styles.title}>Welcome Back</Text>
         <Text style={styles.subtitle}>Sign in to your account</Text>
 
-        {/* Error Feedback */}
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-        {/* Form Inputs */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Email</Text>
           <TextInput

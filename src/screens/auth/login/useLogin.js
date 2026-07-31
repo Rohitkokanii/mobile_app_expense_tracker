@@ -1,20 +1,20 @@
-import {useState, useEffect} from 'react';
 import {
   getAuth,
-  signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithCredential,
+  signInWithEmailAndPassword,
   signOut,
 } from '@react-native-firebase/auth';
 import {
-  getFirestore,
   doc,
   getDoc,
+  getFirestore,
   setDoc,
 } from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {useEffect, useState} from 'react';
 
-import {saveToken, removeToken} from '../../../store/local-store/localDB';
+import {removeToken, saveToken} from '../../../store/local-store/localDB';
 
 export const useLogin = navigation => {
   const [email, setEmail] = useState('');
@@ -39,18 +39,11 @@ export const useLogin = navigation => {
         index: 0,
         routes: [
           {
-            name: 'DrawerGroup',
+            name: 'TabGroup',
             state: {
               routes: [
                 {
-                  name: 'TabGroup',
-                  state: {
-                    routes: [
-                      {
-                        name: 'HomeScreen',
-                      },
-                    ],
-                  },
+                  name: 'HomeScreen',
                 },
               ],
             },
