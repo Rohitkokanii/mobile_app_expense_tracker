@@ -58,6 +58,9 @@ export const useHome = () => {
             {
               text: 'Keep Offline Only',
               style: 'cancel',
+              onPress: async () => {
+                await ExpenseStorage.saveExpenses([]);
+              },
             },
             {
               text: 'Sync to Cloud',

@@ -16,6 +16,7 @@ import layout from '../../../theme/layout';
 import SizedView from '../../../components/common/SizedView';
 import {rwp} from '../../../utils/helpers/responsivePixelHelper';
 import {useHome} from './useHome';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const categories = [
   'Food',
@@ -26,6 +27,84 @@ const categories = [
   'Entertainment',
   'Irrelevant',
 ];
+
+const Header = React.memo(
+  ({
+    title,
+    setTitle,
+    amount,
+    setAmount,
+    addExpense,
+    total,
+    biggest,
+    insights,
+    types,
+  }) => {
+    return (
+      <>
+        <SizedView height={20} />
+        <LinearGradient
+          colors={['#111827', '#1E293B', '#0F172A']}
+          style={styles.dashboard}>
+          <Texts.pt18 style={styles.smallTitle}>Total Expense</Texts.pt18>
+          <Texts.pt38 style={styles.total}>₹{total}</Texts.pt38>
+
+          <View style={layout.rowBetween}>
+            <View>
+              <Texts.pt13 style={styles.metricTitle}>Top Category</Texts.pt13>
+              <Texts.pt16 style={styles.metricValue}>
+                {biggest.category}
+              </Texts.pt16>
+            </View>
+
+            <View>
+              <Texts.pt13 style={styles.metricTitle}>Investment</Texts.pt13>
+              <Texts.pt16 style={styles.metricValue}>
+                ₹{types.growth}
+              </Texts.pt16>
+            </View>
+          </View>
+        </LinearGradient>
+
+        <View style={styles.inputCard}>
+          <Texts.pt14 style={styles.label}>Expense Title</Texts.pt14>
+          <TextInput
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Amazon, Uber, Pizza..."
+            placeholderTextColor="#777"
+            style={styles.input}
+          />
+
+          <Texts.pt14 style={styles.label}>Amount</Texts.pt14>
+          <TextInput
+            value={amount}
+            onChangeText={setAmount}
+            keyboardType="numeric"
+            placeholder="Enter amount"
+            placeholderTextColor="#777"
+            style={styles.input}
+          />
+
+          <TouchableOpacity style={styles.addButton} onPress={addExpense}>
+            <Texts.pt18 style={styles.addText}>Add Expense</Texts.pt18>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.analyticsBox}>
+          <Texts.pt18 style={styles.sectionTitle}>AI Insights</Texts.pt18>
+          {insights.map((item, index) => (
+            <Texts.pt13 key={index} style={styles.insight}>
+              • {item}
+            </Texts.pt13>
+          ))}
+        </View>
+
+        <Texts.pt20 style={styles.historyTitle}>Recent Expenses</Texts.pt20>
+      </>
+    );
+  },
+);
 
 const HomeScreen = () => {
   const {
@@ -79,67 +158,67 @@ const HomeScreen = () => {
     </TouchableOpacity>
   );
 
-  const renderHeader = () => (
-    <>
-      <SizedView height={20} />
-      <LinearGradient
-        colors={['#111827', '#1E293B', '#0F172A']}
-        style={styles.dashboard}>
-        <Texts.pt18 style={styles.smallTitle}>Total Expense</Texts.pt18>
-        <Texts.pt38 style={styles.total}>₹{total}</Texts.pt38>
+  // const renderHeader = () => (
+  //   <>
+  //     <SizedView height={20} />
+  //     <LinearGradient
+  //       colors={['#111827', '#1E293B', '#0F172A']}
+  //       style={styles.dashboard}>
+  //       <Texts.pt18 style={styles.smallTitle}>Total Expense</Texts.pt18>
+  //       <Texts.pt38 style={styles.total}>₹{total}</Texts.pt38>
 
-        <View style={layout.rowBetween}>
-          <View>
-            <Texts.pt13 style={styles.metricTitle}>Top Category</Texts.pt13>
-            <Texts.pt16 style={styles.metricValue}>
-              {biggest.category}
-            </Texts.pt16>
-          </View>
+  //       <View style={layout.rowBetween}>
+  //         <View>
+  //           <Texts.pt13 style={styles.metricTitle}>Top Category</Texts.pt13>
+  //           <Texts.pt16 style={styles.metricValue}>
+  //             {biggest.category}
+  //           </Texts.pt16>
+  //         </View>
 
-          <View>
-            <Texts.pt13 style={styles.metricTitle}>Investment</Texts.pt13>
-            <Texts.pt16 style={styles.metricValue}>₹{types.growth}</Texts.pt16>
-          </View>
-        </View>
-      </LinearGradient>
+  //         <View>
+  //           <Texts.pt13 style={styles.metricTitle}>Investment</Texts.pt13>
+  //           <Texts.pt16 style={styles.metricValue}>₹{types.growth}</Texts.pt16>
+  //         </View>
+  //       </View>
+  //     </LinearGradient>
 
-      <View style={styles.inputCard}>
-        <Texts.pt14 style={styles.label}>Expense Title</Texts.pt14>
-        <TextInput
-          value={title}
-          onChangeText={setTitle}
-          placeholder="Amazon, Uber, Pizza..."
-          placeholderTextColor="#777"
-          style={styles.input}
-        />
+  //     <View style={styles.inputCard}>
+  //       <Texts.pt14 style={styles.label}>Expense Title</Texts.pt14>
+  //       <TextInput
+  //         value={title}
+  //         onChangeText={setTitle}
+  //         placeholder="Amazon, Uber, Pizza..."
+  //         placeholderTextColor="#777"
+  //         style={styles.input}
+  //       />
 
-        <Texts.pt14 style={styles.label}>Amount</Texts.pt14>
-        <TextInput
-          value={amount}
-          onChangeText={setAmount}
-          keyboardType="numeric"
-          placeholder="Enter amount"
-          placeholderTextColor="#777"
-          style={styles.input}
-        />
+  //       <Texts.pt14 style={styles.label}>Amount</Texts.pt14>
+  //       <TextInput
+  //         value={amount}
+  //         onChangeText={setAmount}
+  //         keyboardType="numeric"
+  //         placeholder="Enter amount"
+  //         placeholderTextColor="#777"
+  //         style={styles.input}
+  //       />
 
-        <TouchableOpacity style={styles.addButton} onPress={addExpense}>
-          <Texts.pt18 style={styles.addText}>Add Expense</Texts.pt18>
-        </TouchableOpacity>
-      </View>
+  //       <TouchableOpacity style={styles.addButton} onPress={addExpense}>
+  //         <Texts.pt18 style={styles.addText}>Add Expense</Texts.pt18>
+  //       </TouchableOpacity>
+  //     </View>
 
-      <View style={styles.analyticsBox}>
-        <Texts.pt18 style={styles.sectionTitle}>AI Insights</Texts.pt18>
-        {insights.map((item, index) => (
-          <Texts.pt13 key={index} style={styles.insight}>
-            • {item}
-          </Texts.pt13>
-        ))}
-      </View>
+  //     <View style={styles.analyticsBox}>
+  //       <Texts.pt18 style={styles.sectionTitle}>AI Insights</Texts.pt18>
+  //       {insights.map((item, index) => (
+  //         <Texts.pt13 key={index} style={styles.insight}>
+  //           • {item}
+  //         </Texts.pt13>
+  //       ))}
+  //     </View>
 
-      <Texts.pt20 style={styles.historyTitle}>Recent Expenses</Texts.pt20>
-    </>
-  );
+  //     <Texts.pt20 style={styles.historyTitle}>Recent Expenses</Texts.pt20>
+  //   </>
+  // );
 
   const renderFooter = () => {
     if (!loadingMore) return <SizedView height={80} />;
@@ -160,11 +239,35 @@ const HomeScreen = () => {
 
   return (
     <DefaultWrap MainContainer={styles.container}>
+      {/* <ScrollView> */}
+      {/* <Header
+          title={title}
+          setTitle={setTitle}
+          amount={amount}
+          setAmount={setAmount}
+          addExpense={addExpense}
+          total={total}
+          biggest={biggest}
+          insights={insights}
+          types={types}
+        /> */}
       <FlatList
         data={expenses}
         keyExtractor={item => item.id}
         renderItem={renderExpense}
-        ListHeaderComponent={renderHeader}
+        ListHeaderComponent={
+          <Header
+            title={title}
+            setTitle={setTitle}
+            amount={amount}
+            setAmount={setAmount}
+            addExpense={addExpense}
+            total={total}
+            biggest={biggest}
+            insights={insights}
+            types={types}
+          />
+        }
         ListFooterComponent={renderFooter}
         onEndReached={fetchMoreExpenses}
         onEndReachedThreshold={0.5}
@@ -173,6 +276,7 @@ const HomeScreen = () => {
           <Texts.pt16 style={styles.empty}>No Expenses Added</Texts.pt16>
         }
       />
+      {/* </ScrollView> */}
 
       <Modal visible={teachModal} transparent animationType="fade">
         <View style={styles.modalBg}>
