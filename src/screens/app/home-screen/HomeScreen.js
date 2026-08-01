@@ -251,6 +251,7 @@ const HomeScreen = () => {
           insights={insights}
           types={types}
         /> */}
+      <SizedView height={30} />
       <FlatList
         data={expenses}
         keyExtractor={item => item.id}
