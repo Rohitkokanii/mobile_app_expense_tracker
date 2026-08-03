@@ -207,6 +207,7 @@ export const useHome = () => {
       setAllExpensesForAnalytics(prev => [addedItem, ...prev]);
 
       await refreshWidget();
+      await fetchAllExpensesForAnalytics();
       setTitle('');
       setAmount('');
     } catch (err) {
