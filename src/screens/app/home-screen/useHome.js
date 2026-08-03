@@ -40,6 +40,7 @@ export const useHome = () => {
   const [teachModal, setTeachModal] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
 
+  const [isAddExpenseLoading, setIsAddExpenseLoading] = useState(false);
   const auth = getAuth();
   const db = getFirestore();
   const userId = auth.currentUser?.uid;
@@ -190,6 +191,7 @@ export const useHome = () => {
     if (!userId) return;
 
     try {
+      setIsAddExpenseLoading(true);
       const category = await detectCategory(title);
       const type = getExpenseType(category);
       const newExpense = {
@@ -216,6 +218,8 @@ export const useHome = () => {
     } catch (err) {
       console.error('Add Expense Error:', err);
       Alert.alert('Error', 'Could not add expense. Please try again.');
+    } finally {
+      setIsAddExpenseLoading(false);
     }
   };
 
@@ -311,5 +315,6 @@ export const useHome = () => {
     biggest,
     insights,
     types,
+    isAddExpenseLoading,
   };
 };

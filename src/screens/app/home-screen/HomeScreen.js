@@ -39,6 +39,7 @@ const Header = React.memo(
     biggest,
     insights,
     types,
+    isAddExpenseLoading,
   }) => {
     return (
       <>
@@ -86,8 +87,15 @@ const Header = React.memo(
             style={styles.input}
           />
 
-          <TouchableOpacity style={styles.addButton} onPress={addExpense}>
-            <Texts.pt18 style={styles.addText}>Add Expense</Texts.pt18>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={addExpense}
+            disabled={isAddExpenseLoading}>
+            {isAddExpenseLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Texts.pt18 style={styles.addText}>Add Expense</Texts.pt18>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -126,6 +134,7 @@ const HomeScreen = () => {
     biggest,
     insights,
     types,
+    isAddExpenseLoading,
   } = useHome();
 
   const renderExpense = ({item}) => (
@@ -267,6 +276,7 @@ const HomeScreen = () => {
             biggest={biggest}
             insights={insights}
             types={types}
+            isAddExpenseLoading={isAddExpenseLoading}
           />
         }
         ListFooterComponent={renderFooter}
