@@ -11,32 +11,47 @@ import layout from '../../../theme/layout';
 import {Texts} from '../../../components/common/Texts';
 import {useProfile} from './useProfile'; // Adjust path according to your structure
 
+// Sample gender-based default avatar URLs
+const BOY_AVATAR_URL =
+  'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
+const GIRL_AVATAR_URL =
+  'https://cdn-icons-png.flaticon.com/512/4140/4140047.png';
+const DEFAULT_AVATAR_URL =
+  'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
 const ProfileScreen = ({navigation}) => {
   const {userProfile, loading, error, handleLogout} = useProfile(navigation);
 
+  // Helper to determine avatar image source
+  const getAvatarSource = () => {
+    if (userProfile?.photoURL) {
+      return {uri: userProfile.photoURL};
+    }
+    // const gender = userProfile?.gender?.toLowerCase();
+    // console.log('gender', userProfile);
+
+    // if (gender === 'female' || gender === 'girl') {
+    //   return {uri: GIRL_AVATAR_URL};
+    // }
+    // if (gender === 'male' || gender === 'boy') {
+    //   return {uri: BOY_AVATAR_URL};
+    // }
+    // return {uri: DEFAULT_AVATAR_URL};
+  };
+
   if (loading) {
     return (
-      <DefaultWrap MainContainer={layout.center}>
-        <ActivityIndicator size="large" color="#3182CE" />
+      <DefaultWrap MainContainer={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#8B5CF6" />
       </DefaultWrap>
     );
   }
 
   return (
-    <DefaultWrap MainContainer={layout.center}>
+    <DefaultWrap MainContainer={styles.container}>
       <View style={styles.cardContainer}>
         {/* Profile Avatar */}
-        {userProfile?.photoURL ? (
-          <Image source={{uri: userProfile.photoURL}} style={styles.avatar} />
-        ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Texts.pt20 style={styles.avatarText}>
-              {userProfile?.fullName
-                ? userProfile.fullName.charAt(0).toUpperCase()
-                : 'U'}
-            </Texts.pt20>
-          </View>
-        )}
+        <Image source={getAvatarSource()} style={styles.avatar} />
 
         {/* Display Name */}
         <Texts.pt20 style={[layout.fontWeight.extraBold, styles.nameText]}>
@@ -48,12 +63,12 @@ const ProfileScreen = ({navigation}) => {
           {userProfile?.email || 'No email provided'}
         </Texts.pt14>
 
-        {/* Display Optional Age if present */}
-        {userProfile?.age && (
+        {/* Display Optional Age */}
+        {userProfile?.age ? (
           <Texts.pt14 style={styles.infoText}>
             Age: {userProfile.age}
           </Texts.pt14>
-        )}
+        ) : null}
 
         {/* Display Error if any */}
         {error ? (
@@ -72,60 +87,58 @@ const ProfileScreen = ({navigation}) => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    width: '85%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+  container: {
+    flex: 1,
+    backgroundColor: '#050816',
+    justifyContent: 'center', // Centers card vertically
+    alignItems: 'center', // Centers card horizontally
   },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 16,
-  },
-  avatarPlaceholder: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#3182CE',
+  centerContainer: {
+    flex: 1,
+    backgroundColor: '#050816',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
   },
-  avatarText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
+  cardContainer: {
+    width: '85%',
+    backgroundColor: '#111827',
+    borderRadius: 22,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#1E293B',
+  },
+  avatar: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#8B5CF6',
   },
   nameText: {
-    color: '#1A202C',
+    color: '#F8FAFC',
     marginBottom: 4,
   },
   emailText: {
-    color: '#718096',
+    color: '#94A3B8',
     marginBottom: 8,
   },
   infoText: {
-    color: '#4A5568',
+    color: '#CBD5E1',
     marginBottom: 12,
   },
   errorText: {
-    color: '#E53E3E',
+    color: '#EF4444',
     marginBottom: 12,
   },
   logoutButton: {
-    backgroundColor: '#E53E3E',
-    paddingVertical: 12,
+    backgroundColor: '#EF4444',
+    paddingVertical: 10,
     paddingHorizontal: 32,
-    borderRadius: 8,
+    borderRadius: 10,
     marginTop: 16,
-    width: '100%',
+    width: '50%',
     alignItems: 'center',
   },
   logoutText: {
