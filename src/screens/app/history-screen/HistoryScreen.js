@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -27,6 +28,10 @@ const HistoryScreen = () => {
       fetchExpenses();
     }, [fetchExpenses]),
   );
+
+  const onRefresh = useCallback(() => {
+    fetchExpenses();
+  }, [fetchExpenses]);
 
   const currentMonth = useMemo(
     () => AnalyticsEngine.currentMonth(expenses),
@@ -68,7 +73,17 @@ const HistoryScreen = () => {
 
   return (
     <DefaultWrap MainContainer={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        // refreshControl={
+        //   <RefreshControl
+        //     // refreshing={loading}
+        //     onRefresh={onRefresh}
+        //     tintColor="#8B5CF6"
+        //     colors={['#8B5CF6']}
+        //   />
+        // }
+      >
         <SizedView height={50} />
 
         {loading && expenses.length === 0 ? (
