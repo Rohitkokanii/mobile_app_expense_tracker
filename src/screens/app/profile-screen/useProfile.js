@@ -36,8 +36,8 @@ export const useProfile = navigation => {
         // Fallback to Auth payload if Firestore record doesn't exist
         setUserProfile({
           uid: currentUser.uid,
-          fullName: currentUser.displayName || 'N/A',
-          email: currentUser.email || 'N/A',
+          fullName: currentUser.displayName || '-',
+          email: currentUser.email || '-',
         });
       }
     } catch (err) {

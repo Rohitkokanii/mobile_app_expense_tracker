@@ -153,7 +153,7 @@ const HomeScreen = () => {
         </Texts.pt13>
 
         <Texts.pt11 style={styles.date}>
-          {item.date ? new Date(item.date).toLocaleDateString() : 'N/A'}
+          {item.date ? new Date(item.date).toLocaleDateString() : '-'}
         </Texts.pt11>
       </View>
 

@@ -102,7 +102,7 @@ const HistoryScreen = () => {
               <Texts.pt34 style={styles.total}>₹{total}</Texts.pt34>
 
               <Texts.pt16 style={styles.biggest}>
-                Highest: {biggest?.category || 'N/A'}
+                Highest: {biggest?.category || '-'}
               </Texts.pt16>
             </LinearGradient>
 

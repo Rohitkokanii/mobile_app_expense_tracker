@@ -3,7 +3,7 @@ import {FlexWidget, TextWidget} from 'react-native-android-widget';
 
 export default function MyWidget({
   total = 0,
-  highest = 'N/A',
+  highest = '-',
   investment = 0,
   insight = 'Healthy spending',
 }) {
