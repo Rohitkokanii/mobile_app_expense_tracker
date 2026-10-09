@@ -39,12 +39,39 @@ const Header = React.memo(
     biggest,
     insights,
     types,
-    isAddExpenseLoading,
+    todayTotal,
+    addExpenseLoader,
   }) => {
     return (
       <>
         <SizedView height={20} />
+        {/* History Screen banner */}
         <LinearGradient
+          colors={['#111827', '#1E293B', '#0F172A']}
+          style={styles.headerCard}>
+          <View style={[layout.row, {justifyContent: 'space-around'}]}>
+            <View>
+              <Texts.pt18 style={styles.smallTitle}>This Month</Texts.pt18>
+
+              <Texts.pt34 style={styles.total}>₹{total}</Texts.pt34>
+            </View>
+            <SizedView
+              style={{backgroundColor: '#d2d2d2'}}
+              height={50}
+              width={1}
+            />
+            <View>
+              <Texts.pt18 style={styles.smallTitle}>Todays</Texts.pt18>
+
+              <Texts.pt34 style={styles.total}>₹{todayTotal}</Texts.pt34>
+            </View>
+          </View>
+          <Texts.pt16 style={styles.biggest}>
+            Highest: {biggest?.category || 'N/A'}
+          </Texts.pt16>
+        </LinearGradient>
+        {/* Home Screen Banner */}
+        {/* <LinearGradient
           colors={['#111827', '#1E293B', '#0F172A']}
           style={styles.dashboard}>
           <Texts.pt18 style={styles.smallTitle}>Total Expense</Texts.pt18>
@@ -65,7 +92,7 @@ const Header = React.memo(
               </Texts.pt16>
             </View>
           </View>
-        </LinearGradient>
+        </LinearGradient> */}
 
         <View style={styles.inputCard}>
           <Texts.pt14 style={styles.label}>Expense Title</Texts.pt14>
@@ -90,9 +117,9 @@ const Header = React.memo(
           <TouchableOpacity
             style={styles.addButton}
             onPress={addExpense}
-            disabled={isAddExpenseLoading}>
-            {isAddExpenseLoading ? (
-              <ActivityIndicator size="small" color="#fff" />
+            disabled={addExpenseLoader}>
+            {addExpenseLoader ? (
+              <ActivityIndicator size={'small'} color={'#ffffff'} />
             ) : (
               <Texts.pt18 style={styles.addText}>Add Expense</Texts.pt18>
             )}
@@ -134,7 +161,8 @@ const HomeScreen = () => {
     biggest,
     insights,
     types,
-    isAddExpenseLoading,
+    todayTotal,
+    addExpenseLoader,
   } = useHome();
 
   const renderExpense = ({item}) => (
@@ -276,7 +304,8 @@ const HomeScreen = () => {
             biggest={biggest}
             insights={insights}
             types={types}
-            isAddExpenseLoading={isAddExpenseLoading}
+            todayTotal={todayTotal}
+            addExpenseLoader={addExpenseLoader}
           />
         }
         ListFooterComponent={renderFooter}
@@ -330,6 +359,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  headerCard: {
+    borderRadius: 26,
+    padding: 22,
+    marginBottom: 18,
+  },
+
   dashboard: {
     borderRadius: 28,
     padding: 24,
@@ -338,11 +374,17 @@ const styles = StyleSheet.create({
   smallTitle: {
     color: '#94A3B8',
   },
+
   total: {
-    color: '#FFFFFF',
+    color: '#fff',
     fontWeight: '800',
     marginVertical: 10,
   },
+
+  biggest: {
+    color: '#CBD5E1',
+  },
+
   metricTitle: {
     color: '#64748B',
   },
@@ -350,6 +392,7 @@ const styles = StyleSheet.create({
     color: '#F8FAFC',
     fontWeight: '700',
   },
+
   inputCard: {
     backgroundColor: '#111827',
     borderRadius: 22,

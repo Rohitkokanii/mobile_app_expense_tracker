@@ -38,9 +38,16 @@ const HistoryScreen = () => {
     [expenses],
   );
 
-  const total = AnalyticsEngine.total(currentMonth);
+  // const total = AnalyticsEngine.total(currentMonth);
 
-  const biggest = AnalyticsEngine.biggestCategory(currentMonth);
+  // const biggest = AnalyticsEngine.biggestCategory(currentMonth);
+
+  const total = useMemo(() => AnalyticsEngine.total(expenses), [expenses]);
+
+  const biggest = useMemo(
+    () => AnalyticsEngine.biggestCategory(expenses),
+    [expenses],
+  );
 
   const types = AnalyticsEngine.typeTotals(currentMonth);
 
@@ -94,7 +101,34 @@ const HistoryScreen = () => {
           />
         ) : (
           <>
+            {/* Home Screen banner */}
             <LinearGradient
+              colors={['#111827', '#1E293B', '#0F172A']}
+              style={styles.dashboard}>
+              <Texts.pt18 style={styles.smallTitle}>Total Expense</Texts.pt18>
+              <Texts.pt38 style={styles.total}>₹{total}</Texts.pt38>
+
+              <View style={layout.rowBetween}>
+                <View>
+                  <Texts.pt13 style={styles.metricTitle}>
+                    Top Category
+                  </Texts.pt13>
+                  <Texts.pt16 style={styles.metricValue}>
+                    {biggest.category}
+                  </Texts.pt16>
+                </View>
+
+                <View>
+                  <Texts.pt13 style={styles.metricTitle}>Investment</Texts.pt13>
+                  <Texts.pt16 style={styles.metricValue}>
+                    ₹{types.growth}
+                  </Texts.pt16>
+                </View>
+              </View>
+            </LinearGradient>
+
+            {/* History Screen Banner */}
+            {/* <LinearGradient
               colors={['#111827', '#1E293B', '#0F172A']}
               style={styles.headerCard}>
               <Texts.pt18 style={styles.smallTitle}>This Month</Texts.pt18>
@@ -104,7 +138,7 @@ const HistoryScreen = () => {
               <Texts.pt16 style={styles.biggest}>
                 Highest: {biggest?.category || '-'}
               </Texts.pt16>
-            </LinearGradient>
+            </LinearGradient> */}
 
             <View style={styles.analyticsCard}>
               <Texts.pt20 style={styles.title}>Financial Health</Texts.pt20>
@@ -228,12 +262,11 @@ const styles = StyleSheet.create({
     marginVertical: 40,
   },
 
-  headerCard: {
-    borderRadius: 26,
-    padding: 22,
-    marginBottom: 18,
+  dashboard: {
+    borderRadius: 28,
+    padding: 24,
+    marginBottom: 20,
   },
-
   smallTitle: {
     color: '#94A3B8',
   },
@@ -246,6 +279,14 @@ const styles = StyleSheet.create({
 
   biggest: {
     color: '#CBD5E1',
+  },
+
+  metricTitle: {
+    color: '#64748B',
+  },
+  metricValue: {
+    color: '#F8FAFC',
+    fontWeight: '700',
   },
 
   analyticsCard: {

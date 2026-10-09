@@ -94,7 +94,24 @@ export const AnalyticsEngine = {
       );
     });
   },
+  todayExpenses(expenses) {
+    if (!Array.isArray(expenses)) return [];
 
+    const now = new Date();
+    const currentDate = now.getDate();
+    const currentMonthNum = now.getMonth();
+    const currentYearNum = now.getFullYear();
+
+    return expenses.filter(item => {
+      const d = parseDate(item);
+
+      return (
+        d.getDate() === currentDate &&
+        d.getMonth() === currentMonthNum &&
+        d.getFullYear() === currentYearNum
+      );
+    });
+  },
   monthlyTotals(expenses) {
     const months = {};
     if (!Array.isArray(expenses)) return months;

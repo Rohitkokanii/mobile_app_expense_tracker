@@ -34,6 +34,7 @@ export const useHome = () => {
 
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [addExpenseLoader, setAddExpenseLoader] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [lastDoc, setLastDoc] = useState(null);
 
@@ -191,7 +192,7 @@ export const useHome = () => {
     if (!userId) return;
 
     try {
-      setIsAddExpenseLoading(true);
+      setAddExpenseLoader(true);
       const category = await detectCategory(title);
       const type = getExpenseType(category);
       const newExpense = {
@@ -215,11 +216,12 @@ export const useHome = () => {
       await fetchAllExpensesForAnalytics();
       setTitle('');
       setAmount('');
+      setAddExpenseLoader(false);
     } catch (err) {
       console.error('Add Expense Error:', err);
       Alert.alert('Error', 'Could not add expense. Please try again.');
     } finally {
-      setIsAddExpenseLoading(false);
+      setAddExpenseLoader(false);
     }
   };
 
@@ -279,14 +281,31 @@ export const useHome = () => {
   };
 
   // Calculated Metrics using complete dataset
-  const total = useMemo(
-    () => AnalyticsEngine.total(allExpensesForAnalytics),
+  // const total = useMemo(
+  //   () => AnalyticsEngine.total(allExpensesForAnalytics),
+  //   [allExpensesForAnalytics],
+  // );
+
+  // const biggest = useMemo(
+  //   () => AnalyticsEngine.biggestCategory(allExpensesForAnalytics),
+  //   [allExpensesForAnalytics],
+  // );
+
+  const currentMonth = useMemo(
+    () => AnalyticsEngine.currentMonth(allExpensesForAnalytics),
     [allExpensesForAnalytics],
   );
-  const biggest = useMemo(
-    () => AnalyticsEngine.biggestCategory(allExpensesForAnalytics),
+
+  const today = useMemo(
+    () => AnalyticsEngine.todayExpenses(allExpensesForAnalytics),
     [allExpensesForAnalytics],
   );
+  const todayTotal = AnalyticsEngine.total(today);
+
+  const total = AnalyticsEngine.total(currentMonth);
+
+  const biggest = AnalyticsEngine.biggestCategory(currentMonth);
+
   const insights = useMemo(
     () => AnalyticsEngine.insights(allExpensesForAnalytics),
     [allExpensesForAnalytics],
@@ -315,6 +334,7 @@ export const useHome = () => {
     biggest,
     insights,
     types,
-    isAddExpenseLoading,
+    todayTotal,
+    addExpenseLoader,
   };
 };
