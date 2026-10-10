@@ -108,18 +108,18 @@ export const showMessage = msg => {
 };
 export function formatDateWithMonthAndTime(dateString) {
   const months = [
-    'JAN',
-    'FEB',
-    'MAR',
-    'APR',
-    'MAY',
-    'JUN',
-    'JUL',
-    'AUG',
-    'SEP',
-    'OCT',
-    'NOV',
-    'DEC',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   const date = new Date(dateString);
 
@@ -133,7 +133,7 @@ export function formatDateWithMonthAndTime(dateString) {
   hours = hours % 12;
   hours = hours ? hours : 12; // Handle midnight
 
-  const formattedDate = `${day}.${month}.${year}  |  ${hours}:${
+  const formattedDate = `${day} ${month} ${year}  |  ${hours}:${
     minutes < 10 ? '0' + minutes : minutes
   } ${period}`;
 

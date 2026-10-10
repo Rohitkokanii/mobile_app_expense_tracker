@@ -131,7 +131,7 @@ export function formatISTDateTime(isoString) {
     const minute = get('minute');
     const dayPeriod = get('dayPeriod')?.toLowerCase();
 
-    return `${day}.${month}.${year} | ${hour}:${minute} ${dayPeriod}`;
+    return `${day} ${month} ${year} | ${hour}:${minute} ${dayPeriod}`;
   } catch (error) {
     console.log(error);
   }

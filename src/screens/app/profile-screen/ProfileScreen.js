@@ -5,40 +5,94 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Image,
+  Pressable,
+  ScrollView,
 } from 'react-native';
 import DefaultWrap from '../../../components/wrappers/DefaultWrap';
 import layout from '../../../theme/layout';
 import {Texts} from '../../../components/common/Texts';
-import {useProfile} from './useProfile'; // Adjust path according to your structure
-
-// Sample gender-based default avatar URLs
-const BOY_AVATAR_URL =
-  'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
-const GIRL_AVATAR_URL =
-  'https://cdn-icons-png.flaticon.com/512/4140/4140047.png';
-const DEFAULT_AVATAR_URL =
-  'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
-
+import {useProfile} from './useProfile';
+import SizedView from '../../../components/common/SizedView';
+import {rhp, rwp} from '../../../utils/helpers/responsivePixelHelper';
+import DeviceInfo from 'react-native-device-info';
+import {navigate} from '../../../navigation/RootNavigation';
+import Icons from '../../../components/common/Icons';
 const ProfileScreen = ({navigation}) => {
   const {userProfile, loading, error, handleLogout} = useProfile(navigation);
 
-  // Helper to determine avatar image source
   const getAvatarSource = () => {
     if (userProfile?.photoURL) {
       return {uri: userProfile.photoURL};
     }
-    // const gender = userProfile?.gender?.toLowerCase();
-    // console.log('gender', userProfile);
-
-    // if (gender === 'female' || gender === 'girl') {
-    //   return {uri: GIRL_AVATAR_URL};
-    // }
-    // if (gender === 'male' || gender === 'boy') {
-    //   return {uri: BOY_AVATAR_URL};
-    // }
-    // return {uri: DEFAULT_AVATAR_URL};
   };
 
+  const menuOption = [
+    {
+      id: '1',
+      title: 'Salary Splitter (Coming Soon)',
+      icon: 'wallet-outline',
+    },
+    {
+      id: '2',
+      title: 'Udhar Reminder (Coming Soon)',
+      icon: 'people-outline',
+    },
+    {
+      id: '3',
+      title: 'Budget Planner (Coming Soon)',
+      icon: 'pie-chart-outline',
+    },
+    {
+      id: '4',
+      title: 'Savings Goals (Coming Soon)',
+      icon: 'trophy-outline',
+    },
+    {
+      id: '5',
+      title: 'Bill Reminders (Coming Soon)',
+      icon: 'calendar-outline',
+    },
+    {
+      id: '6',
+      title: 'EMI Tracker (Coming Soon)',
+      icon: 'card-outline',
+    },
+    {
+      id: '7',
+      title: 'Recurring Expenses (Coming Soon)',
+      icon: 'repeat-outline',
+    },
+    {
+      id: '8',
+      title: 'Spending Analytics (Coming Soon)',
+      icon: 'stats-chart-outline',
+    },
+    {
+      id: '9',
+      title: 'Debt Tracker (Coming Soon)',
+      icon: 'trending-down-outline',
+    },
+    {
+      id: '10',
+      title: 'Export Reports (Coming Soon)',
+      icon: 'document-text-outline',
+    },
+    {
+      id: '11',
+      title: 'Notifications (Coming Soon)',
+      icon: 'notifications-outline',
+    },
+    {
+      id: '12',
+      title: 'Privacy (Coming Soon)',
+      icon: 'shield-checkmark-outline',
+    },
+    {
+      id: '13',
+      title: 'About',
+      icon: 'information-circle-outline',
+    },
+  ];
   if (loading) {
     return (
       <DefaultWrap MainContainer={styles.centerContainer}>
@@ -48,20 +102,25 @@ const ProfileScreen = ({navigation}) => {
   }
 
   return (
-    <DefaultWrap MainContainer={styles.container}>
+    // <DefaultWrap MainContainer={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.cardContainer}>
         {/* Profile Avatar */}
-        <Image source={getAvatarSource()} style={styles.avatar} />
+        <View
+          style={[layout.rowBetween, {width: '80%', alignSelf: 'flex-start'}]}>
+          <Image source={getAvatarSource()} style={styles.avatar} />
 
-        {/* Display Name */}
-        <Texts.pt20 style={[layout.fontWeight.extraBold, styles.nameText]}>
-          {userProfile?.fullName || 'User Name'}
-        </Texts.pt20>
-
-        {/* Display Email */}
-        <Texts.pt14 style={styles.emailText}>
-          {userProfile?.email || 'No email provided'}
-        </Texts.pt14>
+          <View>
+            {/* Display Name */}
+            <Texts.pt20 style={[layout.fontWeight.extraBold, styles.nameText]}>
+              {userProfile?.fullName || 'User Name'}
+            </Texts.pt20>
+            {/* Display Email */}
+            <Texts.pt14 style={styles.emailText}>
+              {userProfile?.email || 'No email provided'}
+            </Texts.pt14>
+          </View>
+        </View>
 
         {/* Display Optional Age */}
         {userProfile?.age ? (
@@ -74,13 +133,31 @@ const ProfileScreen = ({navigation}) => {
         {error ? (
           <Texts.pt14 style={styles.errorText}>{error}</Texts.pt14>
         ) : null}
-
+      </View>
+      <SizedView height={20} />
+      <View style={styles.cardContainer}>
+        {menuOption.map(item => (
+          <Pressable key={item.id} style={styles.menuOption}>
+            {/* <Icons.AntDesign name={'account-book'} /> */}
+            <Texts.pt15 children={item.title} style={styles.menuOptionTitle} />
+          </Pressable>
+        ))}
+        <SizedView
+          style={{backgroundColor: '#ebebeb', width: '100%', height: 0.3}}
+        />
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Texts.pt16 style={styles.logoutText}>Log Out</Texts.pt16>
         </TouchableOpacity>
       </View>
-    </DefaultWrap>
+      <SizedView height={20} />
+      <View style={styles.cardContainer}>
+        <Texts.pt11
+          style={styles.appVersion}
+          children={`App Version : ${DeviceInfo.getVersion()} (Beta)`}
+        />
+      </View>
+    </ScrollView>
   );
 };
 
@@ -90,17 +167,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#050816',
-    justifyContent: 'center', // Centers card vertically
-    alignItems: 'center', // Centers card horizontally
+    // paddingVertical: rhp(70),
+    // paddingHorizontal: rwp(13),
+    // justifyContent: 'center', // Centers card vertically
+    // alignItems: 'center', // Centers card horizontally
   },
   centerContainer: {
     flex: 1,
     backgroundColor: '#050816',
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
   },
   cardContainer: {
-    width: '85%',
+    width: '95%',
     backgroundColor: '#111827',
     borderRadius: 22,
     padding: 24,
@@ -109,8 +189,8 @@ const styles = StyleSheet.create({
     borderColor: '#1E293B',
   },
   avatar: {
-    width: 90,
-    height: 90,
+    width: rwp(50),
+    height: rwp(50),
     borderRadius: 45,
     marginBottom: 16,
     borderWidth: 2,
@@ -144,5 +224,18 @@ const styles = StyleSheet.create({
   logoutText: {
     color: '#FFFFFF',
     fontWeight: '700',
+  },
+  menuOption: {
+    padding: rwp(14),
+    borderBottomWidth: 0.3,
+    borderColor: '#989898',
+    width: '100%',
+  },
+  menuOptionTitle: {
+    color: '#ffffff',
+  },
+  appVersion: {
+    color: '#cacaca',
+    fontWeight: '600',
   },
 });

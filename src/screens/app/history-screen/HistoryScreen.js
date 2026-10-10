@@ -19,6 +19,14 @@ import {AnalyticsEngine} from '../utils/AnalyticsEngine';
 import SizedView from '../../../components/common/SizedView';
 import {rwp} from '../../../utils/helpers/responsivePixelHelper';
 import {useHistory} from './useHistory';
+import {
+  formatDateinDigit,
+  formatDateWithMonthAndTime,
+} from '../../../utils/helpers/commonHelper';
+import {
+  formatChatTime,
+  formatISTDateTime,
+} from '../../../utils/helpers/dateHelper';
 
 const HistoryScreen = () => {
   const {expenses, loading, fetchExpenses} = useHistory();
@@ -37,6 +45,7 @@ const HistoryScreen = () => {
     () => AnalyticsEngine.currentMonth(expenses),
     [expenses],
   );
+  console.log('expenses', expenses);
 
   // const total = AnalyticsEngine.total(currentMonth);
 
@@ -221,7 +230,7 @@ const HistoryScreen = () => {
             <Texts.pt22 style={styles.historyTitle}>Expense History</Texts.pt22>
 
             <FlatList
-              data={currentMonth}
+              data={expenses}
               keyExtractor={item => item.id}
               scrollEnabled={false}
               renderItem={({item}) => (
@@ -234,6 +243,9 @@ const HistoryScreen = () => {
                     <Texts.pt12 style={styles.category}>
                       {item.category}
                     </Texts.pt12>
+                    <Texts.pt11 style={styles.date}>
+                      {formatDateWithMonthAndTime(item.date)}
+                    </Texts.pt11>
                   </View>
 
                   <Texts.pt18 style={styles.amount}>₹{item.amount}</Texts.pt18>
@@ -343,7 +355,10 @@ const styles = StyleSheet.create({
     color: '#8B5CF6',
     marginTop: 6,
   },
-
+  date: {
+    color: '#e3e3e3',
+    marginTop: 6,
+  },
   amount: {
     color: '#34D399',
     fontWeight: '800',

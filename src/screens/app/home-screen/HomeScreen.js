@@ -53,7 +53,9 @@ const Header = React.memo(
             <View>
               <Texts.pt18 style={styles.smallTitle}>This Month</Texts.pt18>
 
-              <Texts.pt34 style={styles.total}>₹{total}</Texts.pt34>
+              <Texts.pt34 style={styles.total} numberOfLines={1}>
+                ₹{total}
+              </Texts.pt34>
             </View>
             <SizedView
               style={{backgroundColor: '#d2d2d2'}}
@@ -290,7 +292,7 @@ const HomeScreen = () => {
         /> */}
       <SizedView height={30} />
       <FlatList
-        data={expenses}
+        data={expenses.slice(0, 10)}
         keyExtractor={item => item.id}
         renderItem={renderExpense}
         ListHeaderComponent={
