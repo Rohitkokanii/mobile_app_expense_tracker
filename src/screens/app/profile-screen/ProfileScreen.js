@@ -54,37 +54,37 @@ const ProfileScreen = ({navigation}) => {
     },
     {
       id: '6',
-      title: 'EMI Tracker (Coming Soon)',
+      title: 'EMI Tracker',
       icon: 'card-outline',
     },
     {
       id: '7',
-      title: 'Recurring Expenses (Coming Soon)',
+      title: 'Recurring Expenses',
       icon: 'repeat-outline',
     },
     {
       id: '8',
-      title: 'Spending Analytics (Coming Soon)',
+      title: 'Spending Analytics',
       icon: 'stats-chart-outline',
     },
     {
       id: '9',
-      title: 'Debt Tracker (Coming Soon)',
+      title: 'Debt Tracker',
       icon: 'trending-down-outline',
     },
     {
       id: '10',
-      title: 'Export Reports (Coming Soon)',
+      title: 'Export Reports',
       icon: 'document-text-outline',
     },
     {
       id: '11',
-      title: 'Notifications (Coming Soon)',
+      title: 'Notifications',
       icon: 'notifications-outline',
     },
     {
       id: '12',
-      title: 'Privacy (Coming Soon)',
+      title: 'Privacy',
       icon: 'shield-checkmark-outline',
     },
     {
