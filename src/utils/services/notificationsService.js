@@ -35,7 +35,6 @@ const getNotificationPermission = async () => {
 export const getNotificationDeviceKey = async () => {
   await messaging().registerDeviceForRemoteMessages();
 
-  // 👇 wait until APNs token is available
   if (Platform.OS === 'ios') {
     const apnsToken = await messaging().getAPNSToken();
     if (!apnsToken) {
@@ -45,7 +44,6 @@ export const getNotificationDeviceKey = async () => {
     console.log('APNs Token:', apnsToken);
   }
 
-  // 👇 only call getToken after APNs exists
   const deviceKey = await messaging().getToken();
   console.log('FCM Token:', deviceKey);
   return deviceKey;
@@ -57,7 +55,6 @@ const useNotifications = () => {
     // getNotificationDeviceKey();
   }, []);
 
-  // Foreground FCM handler
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.info(

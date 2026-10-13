@@ -1,6 +1,6 @@
 import {PermissionsAndroid, Platform, ToastAndroid} from 'react-native';
 import RNFetchBlob from 'react-native-blob-util';
-import { showMessage } from './commonHelper';
+import {showMessage} from './commonHelper';
 
 export const checkPermissionAndDownloadFile = async FILE_URL => {
   if (Platform.OS === 'ios') {
@@ -15,11 +15,9 @@ export const checkPermissionAndDownloadFile = async FILE_URL => {
         },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        // Start downloading
         await downloadFile(FILE_URL);
         console.log('Storage Permission Granted.');
       } else {
-        // If permission denied then show alert
         console.log('Error', 'Storage Permission Not Granted');
         if (Platform.Version >= 33) {
           await downloadFile(FILE_URL);
@@ -33,15 +31,12 @@ export const checkPermissionAndDownloadFile = async FILE_URL => {
 };
 
 const downloadFile = async FILE_URL => {
-  // Get today's date to add the time suffix in filename
   let date = new Date();
 
-  // Get file extension
   let file_ext = getFileExtention(FILE_URL);
 
   file_ext = file_ext ? '.' + file_ext[0] : '';
 
-  // config: To get response by passing the downloading related options
   // fs: Root directory path to download
   const {config, fs} = RNFetchBlob;
   let RootDir = fs.dirs.LegacyDCIMDir;

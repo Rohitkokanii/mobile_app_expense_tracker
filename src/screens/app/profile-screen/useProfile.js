@@ -62,17 +62,14 @@ export const useProfile = navigation => {
         await GoogleSignin.signOut();
       }
 
-      // Sign out from Firebase Auth
       await signOut(auth);
 
-      // Clear local storage token
       await removeToken();
 
-      // Reset navigation stack back to WelcomeScreen/LoginScreen
       if (navigation) {
         navigation.reset({
           index: 0,
-          routes: [{name: 'WelcomeScreen'}], // Or 'LoginScreen' depending on your flow
+          routes: [{name: 'WelcomeScreen'}],
         });
       }
     } catch (err) {
